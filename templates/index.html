@@ -29,9 +29,9 @@
                 <li>{{ task.title }}
                     <a href="{{ url_for('done', id=task.id) }}">Done</a> 
                     {% if task.is_expired %}
-                        Expired on {{ task.expired_date }}
+                        Expired on {{ task.expired_date.date() }}
                     {% else %}
-                        Left days: {{ task.expired_date.day - current_date.day }}
+                        Left days: {{ (task.expired_date - current_date).days }}
                     {% endif %} 
                 </li>
             {% endfor %}
