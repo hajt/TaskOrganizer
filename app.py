@@ -40,7 +40,7 @@ class Task(db.Model):
     title = db.Column(db.String(200))
     created_date = db.Column(db.Date, default=date.today())
     done_date = db.Column(db.Date)
-    expired_date = db.Column(db.DateTime, default=datetime.now()+timedelta(days=2))
+    expired_date = db.Column(db.DateTime)
     is_done = db.Column(db.Boolean, default=False)
     is_expired = db.Column(db.Boolean, default=False)
     reminder = db.Column(db.Boolean, default=True)
@@ -114,7 +114,8 @@ def index():
 @app.route('/add', methods=['POST'])
 def add():
     title = request.form['task']
-    task = Task(title=title)
+    days = int(request.form['days'])
+    task = Task(title=title, expired_date=datetime.now()+timedelta(days=days))
     db.session.add(task)
     db.session.commit()
     return redirect(url_for('index'))

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Task Organizer</title>
+    <title>Tasks Organizer</title>
 </head>
 <body>
     <h1>Tasks Organizer</h1>
@@ -12,20 +12,13 @@
     Your reminder email is: {{ user.email }}. You can edit <a href="{{ url_for('config') }}">here</a>
     <form action="{{ url_for('add') }}" method="POST">
         <h2>New task:</h2>
+        <label for="task">Title:</label>
         <input type="text" name="task" required>
+        <label for="days">Validity:</label>
+        <input type="number" name="days" min="1" value="1" required>
         <input type="submit" value="Add">
     </form>
     <div> 
-        <h2>Completed</h2>
-        <ul>
-            {% for task in completed_tasks %}
-                <li><strike>{{ task.title }}</strike>
-                    Done: {{ task.done_date }}
-                    <a href="{{ url_for('undone', id=task.id) }}">Undone</a>
-                    <a href="{{ url_for('delete', id=task.id) }}">Delete</a>
-                </li>
-            {% endfor %}
-        </ul>   
         <h2>Not completed</h2>
         <ul>
             {% for task in incompleted_tasks %}
@@ -36,9 +29,20 @@
                         Created: {{ task.created_date }} Left days: {{ (task.expired_date - current_date).days }}
                     {% endif %} 
                     <a href="{{ url_for('done', id=task.id) }}">Done</a> 
+                    <a href="{{ url_for('delete', id=task.id) }}">Delete</a>
                 </li>
             {% endfor %}
         </ul>
+        <h2>Completed</h2>
+        <ul>
+            {% for task in completed_tasks %}
+                <li><strike>{{ task.title }}</strike>
+                    Done: {{ task.done_date }}
+                    <a href="{{ url_for('undone', id=task.id) }}">Undone</a>
+                    <a href="{{ url_for('delete', id=task.id) }}">Delete</a>
+                </li>
+            {% endfor %}
+        </ul>   
     </div>
 </body>
 </html>
