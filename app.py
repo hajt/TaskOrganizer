@@ -71,9 +71,10 @@ def index():
 
 @app.route('/add', methods=['POST'])
 def add():
+    user = User.query.get(1)
     title = request.form['task']
     days = int(request.form['days'])
-    task = Task(title=title, expired_date=datetime.now()+timedelta(days=days))
+    task = Task(title=title, expired_date=datetime.now()+timedelta(days=days), user=user)
     db.session.add(task)
     db.session.commit()
     return redirect(url_for('index'))
