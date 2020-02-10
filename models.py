@@ -24,6 +24,8 @@ class Task(db.Model):
     is_done = db.Column(db.Boolean, default=False)
     is_expired = db.Column(db.Boolean, default=False)
     reminder = db.Column(db.Boolean, default=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', backref=db.backref('tasks'))
  
     def __repr__(self):
         return "<Task(title='%s', created_date='%s', done_date='%s', expired_date='%s')>" % (self.title, self.created_date, self.done_date, self.expired_date)
