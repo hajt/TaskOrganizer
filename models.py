@@ -1,20 +1,27 @@
 """models.py"""
-from datetime import date
+from datetime import date, datetime
 from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 mail = Mail()
 
+
 class User(db.Model):
+    """ Database 'users' table model class. """ 
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20))
     email = db.Column(db.String(20))
-    
-    def __repr__(self):
-        return "<User(username='%s', email='%s')>" % (self.username, self.email)
+
+
+    def __repr__(self) -> str:
+        return f"<User(username={self.username}, email={self.email})>"
+
 
 class Task(db.Model):
+    """ Database 'tasks' table model class. """ 
+
     __tablename__ = 'tasks'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200))
@@ -26,17 +33,24 @@ class Task(db.Model):
     reminder = db.Column(db.Boolean, default=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref=db.backref('tasks'))
- 
-    def __repr__(self):
-        return "<Task(title='%s', created_date='%s', done_date='%s', expired_date='%s')>" % (self.title, self.created_date, self.done_date, self.expired_date)
+  
 
-    def check_expired(self, current_date):
+    def __repr__(self):
+        return f"<Task(title={self.title}, created_date={self.created_date}, done_date={self.done_date}, expired_date={self.expired_date})>"
+
+  
+    def update_expired_status(self, current_date: datetime) -> None:
+        """ Function which updates expited status, when difference
+        between expired date and current date is less or equal 0. """
         time_left = self.expired_date.day - current_date.day
         if time_left <= 0 and not self.is_expired:
             self.is_expired = True
             db.session.commit()
 
-    def send_reminder_email(self, user, current_date):
+
+    def send_reminder_email(self, user: User, current_date: datetime) -> None:
+        """ Function which sends reminder email and updates 
+        task in database. """
         time_left = self.expired_date.day - current_date.day
         if time_left == 1 and self.reminder:
             subject = "ToDo App Reminder!"
